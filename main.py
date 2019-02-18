@@ -4,13 +4,13 @@ import copy
 
 from src.solution import Solution
 
-n_persons = 9
+n_persons = 22
 n_tables = 3
 n_courses = 3
-table_sizes = [3, 3, 3]
+table_sizes = [8,7,7]
 
-pop_size = 100
-greedy = False
+pop_size = 2500
+greedy = True
 
 random.seed(1234)
 
@@ -23,18 +23,21 @@ solutions = [Solution([np.split(np.random.permutation(np.copy(persons)), np.cums
                        range(n_courses)], n_persons, n_tables, n_courses) for y in range(pop_size)]
 
 for i, solution in enumerate(solutions):
-    print(' ---- NEW SOLUTION ----')
-    print(str(solution.get_score()))
-
+    if i % 100 == 0:
+        print(str(i) + '/' + str(pop_size))
     local_optimum = (solution.get_score() == 0)
-
     while not local_optimum:
         new_solution = solution.improve_solution(greedy)
-        if new_solution is None or new_solution.get_score() == 0:
-            print('Local optimum found.')
+        if new_solution is None:
             local_optimum = True
         else:
             solution = new_solution
-            print(str(solution.get_score()))
+            if new_solution.get_score() == 0:
+                local_optimum = True
 
     solutions[i] = solution
+
+solutions = [{'solution': sol, 'score': sol.get_score()} for sol in solutions]
+solutions = sorted(solutions, key=lambda k: k['score'])
+
+

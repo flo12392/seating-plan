@@ -29,7 +29,7 @@ class Solution:
 
     def _score(self):
         total_incidence_matrix = np.sum(self.incidence_matrix, axis=0)
-        score = np.sum(total_incidence_matrix[total_incidence_matrix > 1])
+        score = np.sum((total_incidence_matrix[total_incidence_matrix > 1]-1)**2)
         self.score = score / 2
 
     def get_plan(self):
@@ -44,7 +44,7 @@ class Solution:
     def get_total_incidence_matrix(self):
         return np.sum(self.incidence_matrix, axis=0)
 
-    def improve_solution(self, greedy: bool):
+    def improve_solution(self, greedy: bool, verbose = False):
         issue = random.choice(np.argwhere(self.get_total_incidence_matrix() > 1))
         conflicts = np.argwhere(
             [[all([x in self.plan[course][table] for x in issue]) for table in range(self.n_tables)] for course in
@@ -66,11 +66,15 @@ class Solution:
                         new_plan[course][table][index_person] = other_person
                         new_solution = Solution(new_plan, self.n_persons, self.n_tables, self.n_courses)
                         new_score = new_solution.get_score()
+                        if verbose:
+                            print('conflict: ' + str(conflict) + '. Switching person ' + str(person) + ' in course ' + str(course) +
+                                  ' from table ' + str(table) + ' to ' + str(other_table) + ' with person ' + str(other_person) +
+                                  ' changes score from ' + str(self.score) + ' to ' + str(new_score) + '.')
                         if new_score < best_score:
                             if greedy:
                                 return new_solution
                             else:
                                 best_score = new_solution.get_score()
-                                best_new_solution = new_solution
+                                best_new_solution = copy.deepcopy(new_solution)
 
         return best_new_solution
