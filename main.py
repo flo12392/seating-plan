@@ -21,13 +21,20 @@ persons = np.arange(n_persons)
 
 solutions = [Solution([np.split(np.random.permutation(np.copy(persons)), np.cumsum(table_sizes)[:-1]) for x in
                        range(n_courses)], n_persons, n_tables, n_courses) for y in range(pop_size)]
-solutions = [{'solution': sol, 'score': sol.get_score()} for sol in solutions]
-solutions = sorted(solutions, key=lambda k: k['score'])
 
-solution1 = solutions[10]['solution']
-total_incidence_matrix = solution1.get_total_incidence_matrix()
-plan = solution1.get_plan()
-score = solution1.get_score()
+for i, solution in enumerate(solutions):
+    print(' ---- NEW SOLUTION ----')
+    print(str(solution.get_score()))
 
-solution2 = solution1.improve_solution(False)
+    local_optimum = (solution.get_score() == 0)
 
+    while not local_optimum:
+        new_solution = solution.improve_solution(greedy)
+        if new_solution is None or new_solution.get_score() == 0:
+            print('Local optimum found.')
+            local_optimum = True
+        else:
+            solution = new_solution
+            print(str(solution.get_score()))
+
+    solutions[i] = solution

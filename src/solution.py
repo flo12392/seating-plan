@@ -50,6 +50,9 @@ class Solution:
             [[all([x in self.plan[course][table] for x in issue]) for table in range(self.n_tables)] for course in
              range(self.n_courses)])
 
+        best_new_solution = None
+        best_score = self.score
+
         for conflict in np.random.permutation(conflicts):
             course = conflict[0].item()
             table = conflict[1].item()
@@ -63,6 +66,11 @@ class Solution:
                         new_plan[course][table][index_person] = other_person
                         new_solution = Solution(new_plan, self.n_persons, self.n_tables, self.n_courses)
                         new_score = new_solution.get_score()
-                        print('old score: ' + str(self.score) + ', new score: ' + str(new_score))
-                        if new_score < self.score:
-                            return new_solution
+                        if new_score < best_score:
+                            if greedy:
+                                return new_solution
+                            else:
+                                best_score = new_solution.get_score()
+                                best_new_solution = new_solution
+
+        return best_new_solution
