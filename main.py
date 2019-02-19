@@ -4,8 +4,6 @@ import copy
 
 from src.solution import Solution
 
-n_persons = 22
-n_tables = 3
 n_courses = 3
 table_sizes = [8,7,7]
 
@@ -14,13 +12,8 @@ greedy = True
 
 random.seed(1234)
 
-if sum(table_sizes) != n_persons:
-    raise ValueError('The number of persons does not match the number of seats at the tables')
-
-persons = np.arange(n_persons)
-
-solutions = [Solution([np.split(np.random.permutation(np.copy(persons)), np.cumsum(table_sizes)[:-1]) for x in
-                       range(n_courses)], n_persons, n_tables, n_courses) for y in range(pop_size)]
+solutions = [Solution([np.split(np.random.permutation(np.arange(sum(table_sizes))), np.cumsum(table_sizes)[:-1]) for x in
+                       range(n_courses)], n_courses, table_sizes) for y in range(pop_size)]
 
 for i, solution in enumerate(solutions):
     if i % 100 == 0:
