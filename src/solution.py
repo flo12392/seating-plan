@@ -29,7 +29,10 @@ class Solution:
     def _score(self):
         total_incidence_matrix = np.sum(self.incidence_matrix, axis=0)
         score = np.sum((total_incidence_matrix[total_incidence_matrix > 1]-1)**2) / 2
-        stdev = np.std(np.sum(total_incidence_matrix>1,axis=1)/np.max(np.sum(total_incidence_matrix>1,axis=1)))
+        if np.max(np.sum(total_incidence_matrix>1,axis=1))>0:
+            stdev = np.std(np.sum(total_incidence_matrix>1,axis=1)/np.max(np.sum(total_incidence_matrix>1,axis=1)))
+        else:
+            stdev = 0
         self.score = np.round(score + stdev,3)
 
     def get_plan(self):
